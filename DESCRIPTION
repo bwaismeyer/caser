@@ -1,9 +1,22 @@
 Package: caser
-Title: What the Package Does (one line, title case)
+Title: Converts Strings Among Common Case and Formatting Conventions
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: person(
+    "Brian", "Waismeyer",
+    email = "bwaismeyer@gmail.com",
+    role = c("aut", "cre")
+    )
+Description: The caser package has a very simple purpose: Help you convert
+    strings - including vectors of strings such as dataframe column names - to a
+    target naming/formatting convention. The package takes advantage of the fact
+    that most naming and formatting conventions tinker with two string
+    properties: the separator between words and the word capitalization rules.
+    By specifying a separator style and a capitilization style, you can quickly
+    flip strings among the most common naming/formatting conventions (or come up
+    with your own fancy pants ones).
 Depends: R (>= 3.3.2)
-License: What license is it under?
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Imports: stringr
+Suggests: testthat
