@@ -25,22 +25,22 @@ pieces of the package are.
 
 ## Supported Separator Styles
 
-* **No Separator Styles** (casing style is implicit)
+* **Styles without a Separator** (casing style is implicit)
     * lower camel case: `exampleString`
-    * upper camle case: `ExampleString`
-* **Separator Styles** (can apply any casing style)
+    * upper camel case: `ExampleString`
+* **Styles with a Separator** (can apply any casing style)
     * underscores: `example_string`
     * spaces: `example string`
     * custom: `example.string`
     
 ## Supported Casing Styles
 
-* **Programming Styles**
+* **Styles for Programming**
     * all lower: `example_string`
     * first letter lower then first letter upper: `example_String`
     * first letter upper: `Example_String`
     * all upper: `EXAMPLE_STRING`
-* **Print Styles**
+* **Styles for Printing**
     * proper title: `Implements_the_Chicago_Manual_of_Style_Capitalization_Rules`
     * sentence: `First_word_capitalized_the_rest_lower`
     

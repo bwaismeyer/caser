@@ -18,11 +18,21 @@
 #'   warning.
 #' @param source_sep An optional character string specifying the character(s) or
 #'   pattern used as as separator in the source string. The splitting is handled
-#'   by \code{gsub} and so can be a regular expression.
+#'   by \code{gsub} and so can be a regular expression. If the source style is a
+#'   camel style, it is suggested that you leave this blank as this will be
+#'   detected automatically.
 #' @param target_sep A character string describing the character(s) to be used
-#'   as a separator in the converted string. Defaults to an underscore ("_").
+#'   as a separator in the converted string. Defaults to an underscore ("_"). If
+#'   \code{target_case} is set to either \code{lower_camel} or
+#'   \code{upper_camel}, this value is ignored.
 #' @param target_case The casing style to be applied to the converted string.
-#'   options include: \code{all_lower}... [TBD]
+#'   Casing-only options include: \code{all_lower},
+#'   \code{first_lower_then_upper}, \code{first_upper}, \code{all_upper},
+#'   \code{title}, \code{sentence}. Casing + separator options include:
+#'   \code{lower_camel}, \code{upper_camel}.
+#' @param ignore A vector of strings describing symbols to exclude as
+#'   candidates.
+#'
 #' @return If the input is a character string - or is successfully converted -
 #'   and the source separator is given - or can be auto-detected - the output
 #'   will be a character string using the separator and casing style specified
@@ -39,7 +49,7 @@ convert_string <- function(source_str,
     # string on failure).
 
     # Check if source separator specified.
-    # FUTURE: Implement warnings and ignore behavior.
+    # FUTURE: Implement warnings.
     if (!is.null(source_sep)) {
         # Check if case was specified for separator style.
         if(source_sep == "case") {

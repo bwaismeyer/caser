@@ -14,9 +14,13 @@ Description: The caser package has a very simple purpose: Help you convert
     By specifying a separator style and a capitilization style, you can quickly
     flip strings among the most common naming/formatting conventions (or come up
     with your own fancy pants ones).
-Depends: R (>= 3.3.2)
+Depends:
+    R (>= 3.3.2)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: stringr
-Suggests: testthat
+Imports:
+    stringr
+Suggests:
+    testthat
+RoxygenNote: 5.0.1
