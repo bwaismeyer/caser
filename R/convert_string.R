@@ -65,15 +65,59 @@ convert_string <- function(source_str,
     }
 
     # Break the string based on the separator style.
-    # - manual: Break on given separator value.
-    # - non_character_non_numeric: Break on non-character/non-numeric values.
     #   (Future: Excluding any specified values to ignore).
+    # - manual: Break on given separator value.
+    if(source_sep_style %in% c("manual", "non_character_non_numeric")) {
+        # Convert the source separator candiates into a regex string.
+        source_sep_regex <- paste0(source_sep, collapse = "|")
+        # Break the string up.
+        broken_str <- unlist(strsplit(source_str, source_sep_regex))
+    }
     # - camel: Break on upper casing (don't drop value).
     # - single_word: No break.
     # - Optional: Return message indicating separator style and (where
     #   appropriate) value used.
 
+    # Standardize the observed string casing.
+    broken_str <- tolower(broken_str)
+
     # Apply the target casing to the broken string.
+    if(target_case == "lower_camel") {
+        # Target the words.
+        first_word <- broken_str[1]
+        if(length(broken_str) > 1) {
+            other_words <- broken_str[2:length(broken_str)]
+        } else {
+            other_words <- NA
+        }
+
+        # Handle first word.
+        first_word <- tolower(first_word)
+
+        # Capitalize the first letter of each following word.
+        if(!is.na(other_words)) {
+            for(word_index in 1:length(other_words)) {
+                split_word <- unlist(strsplit(other_words[word_index], ""))
+                split_word[1] <- toupper(split_word[1])
+                other_words[word_index] <- paste0(split_word, collapse = "")
+            }
+        }
+
+        # Update broken_str.
+        if(!is.na(other_words)) {
+            broken_str <- c(first_word, other_words)
+        } else {
+            broken_str <- first_word
+        }
+    } else if(target_case == "upper_camel") {
+        # Capitalize the first letter of each word.
+        for(word_index in 1:length(broken_str)) {
+            split_word <- unlist(strsplit(broken_str[word_index], ""))
+            split_word[1] <- toupper(split_word[1])
+            broken_str[word_index] <- paste0(split_word, collapse = "")
+        }
+    }
+    # I AM HERE WITH IMPLEMENTATION (NEED TO WRITE THESE TESTS NEXT).
     # - all_lower
     # - first_lower_then_first_upper
     # - first_upper
@@ -82,12 +126,16 @@ convert_string <- function(source_str,
     # - sentence
 
     # Rejoin the broken string using the target separator.
+    if(target_case %in% c("lower_camel", "upper_camel")) {
+        target_sep = ""
+    }
+
+    new_str <- paste(broken_str, collapse = target_sep)
 
     # Return the converted string.
     # FOR SCALING UP: Maybe also return sep style and value for report across
     #   vector conversion.
-    #return(source_sep_style)
-    return(source_sep_style)
+    return(new_str)
 }
 
 # warning("Multiple separator candidates detected.\n",

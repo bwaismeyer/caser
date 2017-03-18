@@ -5,6 +5,8 @@ test_that("Strings conversion matches expectation", {
     # Lower and upper camel conversions.
     expect_equal(convert_string("right back", target_case = "lower_camel"),
                  "rightBack")
+    expect_equal(convert_string("Right BaCk", target_case = "lower_camel"),
+                 "rightBack")
     expect_equal(convert_string("right_back_def", target_case = "upper_camel"),
                  "RightBackDef")
     expect_equal(convert_string("center@am-mid", target_case = "upper_camel"),
@@ -14,6 +16,7 @@ test_that("Strings conversion matches expectation", {
     # First letters.
     # Chicago Manual of Style title.
     # Sentence.
+    # Test that functions as expected with varied input casing.
 })
 
 test_that("Manual source, conversion, and ignore rules match expectation", {
