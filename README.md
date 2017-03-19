@@ -20,8 +20,14 @@ again.
 value used.
 
 ### `convert_strings`
-* Build basic doc/structure.
-* Build tests (adapt test_convert_string).
+* Build tests (see test_convert_string for ideas, though should focus more on
+vector and dataframe behavior).
+* Code string vector conversion.
+* Code df conversion.
+* Detect and give error for invalid argument inputs (e.g., unknown casing
+styles).
+* Move all error handling to this layer (may need to update supporting layers to
+pass errors and other performance data up).
 
 ### `caser` (overall)
 * Switch to stringr functions.
