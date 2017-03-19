@@ -1,7 +1,7 @@
 # `caser`
 
-An R package for converting strings and string vectors among common naming and
-formatting conventions.
+An R package for converting strings and dataframe column names among common 
+separator and casing styles.
 
 ## To Do
 ### `convert_string`
