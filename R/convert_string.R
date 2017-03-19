@@ -21,6 +21,8 @@
 #'   by \code{gsub} and so can be a regular expression. If the source style is a
 #'   camel style, it is suggested that you leave this blank as this will be
 #'   detected automatically.
+#' @param ignore A vector of strings describing symbols to exclude as
+#'   candidates.
 #' @param target_sep A character string describing the character(s) to be used
 #'   as a separator in the converted string. Defaults to an underscore ("_"). If
 #'   \code{target_case} is set to either \code{lower_camel} or
@@ -30,8 +32,11 @@
 #'   \code{first_lower_then_upper}, \code{first_upper}, \code{all_upper},
 #'   \code{title}, \code{sentence}. Casing + separator options include:
 #'   \code{lower_camel}, \code{upper_camel}.
-#' @param ignore A vector of strings describing symbols to exclude as
-#'   candidates.
+#' @param special_caps An optional string vector of words that should be
+#'   capitalized as specified in the string vector. They will be converted to
+#'   lowercase for matching and matching words will be updated to match the
+#'   version provided in the string vector.
+
 #'
 #' @return If the input is a character string - or is successfully converted -
 #'   and the source separator is given - or can be auto-detected - the output
@@ -40,16 +45,26 @@
 #'
 #' @export
 convert_string <- function(source_str,
-                        source_sep = NULL,
-                        ignore = NULL,
-                        target_sep = "_",
-                        target_case = "all_lower"
+                           source_sep = NULL,
+                           ignore = NULL,
+                           target_sep = "_",
+                           target_case = "all_lower",
+                           special_caps = NULL
 ) {
-    # FUTURE: Implement force to string and warnings where fail (return source
-    # string on failure).
+    # TO DO
+    # * Implement force to string and warnings where fail (return source
+    #   string on failure).
+    # * Optional: Return message indicating separator style and (where
+    #   appropriate) value used.
+    # * Implement warning where auto-detect uses multiple sep candidates.
+    # * Warn if conversion will produce strings that cannot be recovered or
+    #   converted again.
+    # I AM HERE
+    # * Option to specify words to first letter capitalize.
+    # * Option to specify words to full caps.
+    # * Option to change patterns before breaking up. preformatting
 
     # Check if source separator specified.
-    # FUTURE: Implement warnings.
     if (!is.null(source_sep)) {
         # Check if case was specified for separator style.
         if(source_sep == "case") {
@@ -65,24 +80,26 @@ convert_string <- function(source_str,
     }
 
     # Break the string based on the separator style.
-    #   (Future: Excluding any specified values to ignore).
-    # - manual: Break on given separator value.
     if(source_sep_style %in% c("manual", "non_character_non_numeric")) {
-        # Convert the source separator candiates into a regex string.
+        # Convert the source separator candidates into a regex string.
         source_sep_regex <- paste0(source_sep, collapse = "|")
+
         # Break the string up.
         broken_str <- unlist(strsplit(source_str, source_sep_regex))
+    } else if(source_sep_style == "case") {
+        # Break the string up.
+        broken_str <- unlist(strsplit(source_str,
+                                      "(?=[[:upper:]])(?<=[[:lower:]])|(?=[[:upper:]])(?<=[[:upper:]])",
+                                      perl = TRUE))
+    } else if(source_sep_style == "single_word") {
+        broken_str <- source_str
     }
-    # - camel: Break on upper casing (don't drop value).
-    # - single_word: No break.
-    # - Optional: Return message indicating separator style and (where
-    #   appropriate) value used.
 
     # Standardize the observed string casing.
     broken_str <- tolower(broken_str)
 
     # Apply the target casing to the broken string.
-    if(target_case == "lower_camel") {
+    if(target_case %in% c("lower_camel", "first_lower_then_first_upper")) {
         # Target the words.
         first_word <- broken_str[1]
         if(length(broken_str) > 1) {
@@ -91,11 +108,8 @@ convert_string <- function(source_str,
             other_words <- NA
         }
 
-        # Handle first word.
-        first_word <- tolower(first_word)
-
         # Capitalize the first letter of each following word.
-        if(!is.na(other_words)) {
+        if(!is.na(other_words[[1]])) {
             for(word_index in 1:length(other_words)) {
                 split_word <- unlist(strsplit(other_words[word_index], ""))
                 split_word[1] <- toupper(split_word[1])
@@ -104,26 +118,57 @@ convert_string <- function(source_str,
         }
 
         # Update broken_str.
-        if(!is.na(other_words)) {
+        if(!is.na(other_words[[1]])) {
             broken_str <- c(first_word, other_words)
         } else {
             broken_str <- first_word
         }
-    } else if(target_case == "upper_camel") {
+    } else if(target_case %in% c("upper_camel", "first_upper")) {
         # Capitalize the first letter of each word.
         for(word_index in 1:length(broken_str)) {
             split_word <- unlist(strsplit(broken_str[word_index], ""))
             split_word[1] <- toupper(split_word[1])
             broken_str[word_index] <- paste0(split_word, collapse = "")
         }
+    } else if(target_case == "all_upper") {
+        broken_str <- toupper(broken_str)
+    } else if(target_case == "all_lower") {
+        broken_str <- broken_str
+    } else if(target_case == "sentence") {
+        # Target the words.
+        first_word <- broken_str[1]
+        if(length(broken_str) > 1) {
+            other_words <- broken_str[2:length(broken_str)]
+        } else {
+            other_words <- NA
+        }
+
+        # Capitalize the first letter of the first word.
+        split_word <- unlist(strsplit(first_word, ""))
+        split_word[1] <- toupper(split_word[1])
+        first_word <- paste0(split_word, collapse = "")
+
+        # Update broken_str.
+        if(!is.na(other_words[[1]])) {
+            broken_str <- c(first_word, other_words)
+        } else {
+            broken_str <- first_word
+        }
+    } else if(target_case == "proper_title") {
+        # Capitalize the first letter of each word with four or more letters,
+        # plus the first and last word.
+        for(word_index in 1:length(broken_str)) {
+            split_word <- unlist(strsplit(broken_str[word_index], ""))
+
+            if(length(split_word) >= 4 |
+               word_index == 1 |
+               word_index == length(broken_str)) {
+                split_word[1] <- toupper(split_word[1])
+            }
+
+            broken_str[word_index] <- paste0(split_word, collapse = "")
+        }
     }
-    # I AM HERE WITH IMPLEMENTATION (NEED TO WRITE THESE TESTS NEXT).
-    # - all_lower
-    # - first_lower_then_first_upper
-    # - first_upper
-    # - all_upper
-    # - proper_title
-    # - sentence
 
     # Rejoin the broken string using the target separator.
     if(target_case %in% c("lower_camel", "upper_camel")) {
@@ -133,8 +178,6 @@ convert_string <- function(source_str,
     new_str <- paste(broken_str, collapse = target_sep)
 
     # Return the converted string.
-    # FOR SCALING UP: Maybe also return sep style and value for report across
-    #   vector conversion.
     return(new_str)
 }
 

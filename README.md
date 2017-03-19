@@ -41,7 +41,7 @@ pieces of the package are.
     * first letter upper: `Example_String`
     * all upper: `EXAMPLE_STRING`
 * **Styles for Printing**
-    * proper title: `Implements_the_Chicago_Manual_of_Style_Capitalization_Rules`
+    * proper title: `Implements_Simplified_Associated_Press_Capitalization_Rules`
     * sentence: `First_word_capitalized_the_rest_lower`
     
 ## Key Package Functions
@@ -52,4 +52,4 @@ IN PROGRESS.
 
 * The [Wikipedia discussion of naming conventions](https://en.wikipedia.org/wiki/Naming_convention_(programming))
     (especially in programming).
-* A (very) concise summary of [the Chicago Manual of Style capitalization rules](http://www.titlecapitalization.com/#).
+* A (very) concise summary of [the Associated Press capitalization rules](http://www.titlecapitalization.com/#).
