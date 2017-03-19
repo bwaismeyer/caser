@@ -35,14 +35,46 @@ test_that("Strings conversion matches expectation", {
                  "Center_am_Mid")
     expect_equal(convert_string("i believe in dogs", target_case = "proper_title"),
                  "I_Believe_in_Dogs")
-    # Test that functions as expected with varied input casing.
 })
 
 test_that("Manual source, conversion, and ignore rules match expectation", {
     # Source separator specified.
+    expect_equal(convert_string("center@mid_left",
+                                source_sep = "@",
+                                target_case = "upper_camel"),
+                 "CenterMid_left")
+    expect_equal(convert_string("center@mid_left",
+                                source_sep = "@|_",
+                                target_case = "upper_camel"),
+                 "CenterMidLeft")
     # Custom target separator honored (except for camel conversions).
+    expect_equal(convert_string("center@mid_left",
+                                target_sep = "__",
+                                target_case = "sentence"),
+                 "Center__mid__left")
+    expect_equal(convert_string("center@mid_left",
+                                target_sep = "__",
+                                target_case = "upper_camel"),
+                 "CenterMidLeft")
     # Ignore rules honored (only for auto-detect).
+    expect_equal(convert_string("center@mid_left",
+                                ignore = "_",
+                                target_case = "upper_camel"),
+                 "CenterMid_left")
+    expect_equal(convert_string("center@mid_left",
+                                source_sep = "@|_",
+                                ignore = "_",
+                                target_case = "upper_camel"),
+                 "CenterMidLeft")
     # Single word honored.
     expect_equal(convert_string("centermid", target_case = "upper_camel"),
                  "Centermid")
+    # Special cap rules honored.
+    expect_equal(convert_string("the_best_Cam", target_case = "sentence",
+                                special_caps = c("Best", "CAM")),
+                 "The_Best_CAM")
+    expect_equal(convert_string("nOboDY@likes_a_brian_bam",
+                                target_case = "sentence",
+                                special_caps = c("Brian", "BAM")),
+                 "Nobody_likes_a_Brian_BAM")
 })

@@ -3,6 +3,36 @@
 An R package for converting strings and string vectors among common naming and
 formatting conventions.
 
+## To Do
+### `convert_string`
+* Implement force to string and warnings where fail (return source string on
+failure).
+* Implement warning where auto-detect uses multiple sep candidates.
+```
+# warning("Multiple separator candidates detected.\n",
+#         paste0("* Detected:", candidate_seps, "\n"),
+#         "* All will be used as separators.",
+#         "* You can control this behavior with 'source_sep` and `ignore`.\n")
+```
+* Warn if conversion will produce strings that cannot be recovered or converted
+again.
+* Optional: Return message indicating separator style and (where appropriate) 
+value used.
+
+### `convert_strings`
+* Build basic doc/structure.
+* Build tests (adapt test_convert_string).
+
+### `caser` (overall)
+* Switch to stringr functions.
+* Insure perl always set to TRUE where appropriate.
+* Hide internal functions.
+* Make sure use proper "::" and ":::" notation where use material from other
+packages or unexported `caser` material.
+* Review all docs to make sure still up to date.
+* Make sure dependencies properly captured.
+* Test with `dplyr`.
+
 ## Introduction
 
 Ever find yourself dealing with a dataframe with unruly column names? Or with a 

@@ -18,11 +18,12 @@
 #'   warning.
 #' @param source_sep An optional character string specifying the character(s) or
 #'   pattern used as as separator in the source string. The splitting is handled
-#'   by \code{gsub} and so can be a regular expression. If the source style is a
-#'   camel style, it is suggested that you leave this blank as this will be
+#'   by \code{strplit} and so can be a regular expression. If the source style
+#'   is a camel style, it is suggested that you leave this blank as this will be
 #'   detected automatically.
-#' @param ignore A vector of strings describing symbols to exclude as
-#'   candidates.
+#' @param ignore Only used if the source separator is auto-detected (i.e.,
+#'   \code{source_sep} is not specified). A vector of strings describing symbols
+#'   to exclude as candidates.
 #' @param target_sep A character string describing the character(s) to be used
 #'   as a separator in the converted string. Defaults to an underscore ("_"). If
 #'   \code{target_case} is set to either \code{lower_camel} or
@@ -50,21 +51,7 @@ convert_string <- function(source_str,
                            target_sep = "_",
                            target_case = "all_lower",
                            special_caps = NULL
-) {
-    # TO DO
-    # * Implement force to string and warnings where fail (return source
-    #   string on failure).
-    # * Optional: Return message indicating separator style and (where
-    #   appropriate) value used.
-    # * Implement warning where auto-detect uses multiple sep candidates.
-    # * Warn if conversion will produce strings that cannot be recovered or
-    #   converted again.
-    # I AM HERE
-    # * Option to specify words to first letter capitalize.
-    # * Option to specify words to full caps.
-    # * Option to change patterns before breaking up. preformatting
-
-    # Check if source separator specified.
+) {# Check if source separator specified.
     if (!is.null(source_sep)) {
         # Check if case was specified for separator style.
         if(source_sep == "case") {
@@ -170,18 +157,26 @@ convert_string <- function(source_str,
         }
     }
 
-    # Rejoin the broken string using the target separator.
+    # If target case is camel, insure the target separator is set correctly.
     if(target_case %in% c("lower_camel", "upper_camel")) {
         target_sep = ""
     }
 
+    # If special capitalization rules have been provided, implement these.
+    if(!is.null(special_caps)) {
+        special_caps <- special_caps[tolower(special_caps) %in% broken_str]
+
+        if(length(special_caps > 0)) {
+            for(word in special_caps) {
+                broken_str <- gsub(tolower(word), word, broken_str,
+                                   fixed = TRUE)
+            }
+        }
+    }
+
+    # Rejoin the broken string using the target separator.
     new_str <- paste(broken_str, collapse = target_sep)
 
     # Return the converted string.
     return(new_str)
 }
-
-# warning("Multiple separator candidates detected.\n",
-#         paste0("* Detected:", candidate_seps, "\n"),
-#         "* All will be used as separators.",
-#         "* You can control this behavior with 'source_sep` and `ignore`.\n")
