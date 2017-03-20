@@ -37,6 +37,12 @@
 #'   capitalized as specified in the string vector. They will be converted to
 #'   lowercase for matching and matching words will be updated to match the
 #'   version provided in the string vector.
+#' @param break_alpha_blocks If TRUE, conversion from camel case will break up
+#'   capitalized blocks of letters to treat each letter as a single word. If
+#'   FALSE (the default behavior), conversion will try to honor alpha blocks of
+#'   three or more characters as single words. Where two capitalized characters
+#'   occur together, they will be broken up unless they occur at the end of the
+#'   string.
 
 #'
 #' @return If the input is a character string - or is successfully converted -
@@ -50,7 +56,8 @@ convert_string <- function(source_str,
                            ignore = NULL,
                            target_sep = "_",
                            target_case = "all_lower",
-                           special_caps = NULL
+                           special_caps = NULL,
+                           break_alpha_blocks = FALSE
 ) {# Check if source separator specified.
     if (!is.null(source_sep)) {
         # Check if case was specified for separator style.
@@ -74,10 +81,39 @@ convert_string <- function(source_str,
         # Break the string up.
         broken_str <- unlist(strsplit(source_str, source_sep_regex))
     } else if(source_sep_style == "case") {
-        # Break the string up.
+        # Break the string up. Inititally keep capitalized blocks together.
+        source_sep_regex <- paste0(
+            # Break before upper after lower.
+            "(?=[[:upper:]])(?<=[[:lower:]])",
+            "|",
+            # Break before upper after digit.
+            "(?=[[:upper:]])(?<=[[:digit:]])",
+            "|",
+            # Break before digit after alpha.
+            "(?=[[:digit:]])(?<=[[:alpha:]])",
+            collapse = "")
+
         broken_str <- unlist(strsplit(source_str,
-                                      "(?=[[:upper:]])(?<=[[:lower:]])|(?=[[:upper:]])(?<=[[:upper:]])",
+                                      source_sep_regex,
                                       perl = TRUE))
+        if(break_alpha_blocks) {
+            # Break up all capital blocks.
+            unlist(strsplit(broken_str,
+                            # Break after upper unless followed by lower.
+                            "(?<=[[:upper:]])(?![[:lower:]])",
+                            perl = TRUE))
+        } else {
+            # Break up blocks of capitals if less than three characters.
+            source_sep_regex <- paste0(
+                # Break after upper if followed by one upper and then
+                # lower/digit.
+                "(?<=[[:upper:]])(?=[[:upper:]]{1}(?=[[:lower:]]|[[:digit:]]))",
+                collapse = "")
+
+            broken_str <- unlist(strsplit(broken_str,
+                                          source_sep_regex,
+                                          perl = TRUE))
+        }
     } else if(source_sep_style == "single_word") {
         broken_str <- source_str
     }

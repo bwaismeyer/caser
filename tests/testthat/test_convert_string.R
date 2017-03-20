@@ -15,11 +15,15 @@ test_that("Strings conversion matches expectation", {
                  "CenterAmMid")
     expect_equal(convert_string("CenterAmMid", target_case = "upper_camel"),
                  "CenterAmMid")
+    expect_equal(convert_string("ISee20Reasons", target_case = "upper_camel"),
+                 "ISee20Reasons")
     # All letter upper or lower.
     expect_equal(convert_string("CenterAmMid", target_case = "all_lower"),
                  "center_am_mid")
     expect_equal(convert_string("CenterAmMid", target_case = "all_upper"),
                  "CENTER_AM_MID")
+    expect_equal(convert_string("ISee20Reasons", target_case = "all_upper"),
+                 "I_SEE_20_REASONS")
     # First letters.
     expect_equal(convert_string("CenterAmMid",
                                 target_case = "first_lower_then_first_upper"),
@@ -30,6 +34,8 @@ test_that("Strings conversion matches expectation", {
     # Sentence.
     expect_equal(convert_string("CenterAmMid", target_case = "sentence"),
                  "Center_am_mid")
+    expect_equal(convert_string("CenterAmMidASF", target_case = "sentence"),
+                 "Center_am_mid_asf")
     # Associated Press style title.
     expect_equal(convert_string("Center@Am_Mid", target_case = "proper_title"),
                  "Center_am_Mid")

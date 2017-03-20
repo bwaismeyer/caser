@@ -18,6 +18,12 @@
 #' separator auto-detect should ignore and can provide more specific
 #' capitalization rules for target words in the strings.
 #'
+#' Note: Blocks of numeric characters will be treated as distinct words when
+#' converting from camel case (e.g., in "omgPuppy120", "120" would be treated as
+#' a distinct word). Blocks of capitals longer than two characters will be
+#' treated likewise (e.g., in "omgIPuppyAAA", "AAA" would be treated as one word
+#' but "I" and "Puppy" separated).
+#'
 #' @param source_strings A string vector with one or more strings to convert.
 #'   Non-character types will be forced to character with a warning.
 #' @param source_sep An optional character string specifying the character(s) or
