@@ -22,7 +22,7 @@
 #' converting from camel case (e.g., in "omgPuppy120", "120" would be treated as
 #' a distinct word). Blocks of capitals longer than two characters will be
 #' treated likewise (e.g., in "omgIPuppyAAA", "AAA" would be treated as one word
-#' but "I" and "Puppy" separated).
+#' but "I" and "Puppy" separated) unless \code{break_alpha_blocks = TRUE}.
 #'
 #' @param source_strings A string vector with one or more strings to convert.
 #'   Non-character types will be forced to character with a warning.
@@ -47,6 +47,12 @@
 #'   capitalized as specified in the string vector. They will be converted to
 #'   lowercase for matching and matching words will be updated to match the
 #'   version provided in the string vector.
+#' @param break_alpha_blocks If TRUE, conversion from camel case will break up
+#'   capitalized blocks of letters to treat each letter as a single word. If
+#'   FALSE (the default behavior), conversion will try to honor alpha blocks of
+#'   three or more characters as single words. Where two capitalized characters
+#'   occur together, they will be broken up unless they occur at the end of the
+#'   string.
 #'
 #' @return If the input is a string vector - or is successfully converted - and
 #'   the source separator is given - or can be auto-detected - the output will
@@ -62,7 +68,8 @@ convert_strings <- function(source_strings,
                             ignore = NULL,
                             target_sep = "_",
                             target_case = "all_lower",
-                            special_caps = NULL
+                            special_caps = NULL,
+                            break_alpha_blocks = FALSE
 ) {
 
 }
