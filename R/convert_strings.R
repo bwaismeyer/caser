@@ -24,8 +24,8 @@
 #' treated likewise (e.g., in "omgIPuppyAAA", "AAA" would be treated as one word
 #' but "I" and "Puppy" separated) unless \code{break_alpha_blocks = TRUE}.
 #'
-#' @param source_strings A string vector with one or more strings to convert.
-#'   Non-character types will be forced to character with a warning.
+#' @param string_source A string vector or dataframe with one or more strings to
+#'   convert. Non-character types will be forced to character with a warning.
 #' @param source_sep An optional character string specifying the character(s) or
 #'   pattern(s) used as as separator in the source strings. The splitting is
 #'   handled by \code{strplit} and so can be a regular expression. If the source
@@ -63,13 +63,25 @@
 #'   separator/case styling applied to the dataframe column names.
 #'
 #' @export
-convert_strings <- function(source_strings,
-                            source_sep = NULL,
-                            ignore = NULL,
-                            target_sep = "_",
-                            target_case = "all_lower",
-                            special_caps = NULL,
-                            break_alpha_blocks = FALSE
-) {
+convert_strings <- function(string_source,
+                            ...
+) {# Test if source is a dataframe.
+    if(is.data.frame(string_source)) {
+        source_strings <- names(string_source)
+    } else {
+        source_strings <- string_source
+    }
 
+    # Perform the string conversion.
+    new_strings <- unlist(lapply(source_strings,
+                                 function(x) caser:::convert_string(x, ...))
+    )
+
+    # Return the appropriate object.
+    if(is.data.frame(string_source)) {
+        names(string_source) <- new_strings
+        return(string_source)
+    } else {
+        return(new_strings)
+    }
 }

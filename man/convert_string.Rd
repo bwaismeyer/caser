@@ -5,7 +5,8 @@
 \title{Convert the separator/casing for a single string.}
 \usage{
 convert_string(source_str, source_sep = NULL, ignore = NULL,
-  target_sep = "_", target_case = "all_lower")
+  target_sep = "_", target_case = "all_lower", special_caps = NULL,
+  break_alpha_blocks = FALSE)
 }
 \arguments{
 \item{source_str}{A character string to convert to a new separator and/or
@@ -14,12 +15,13 @@ warning.}
 
 \item{source_sep}{An optional character string specifying the character(s) or
 pattern used as as separator in the source string. The splitting is handled
-by \code{gsub} and so can be a regular expression. If the source style is a
-camel style, it is suggested that you leave this blank as this will be
+by \code{strplit} and so can be a regular expression. If the source style
+is a camel style, it is suggested that you leave this blank as this will be
 detected automatically.}
 
-\item{ignore}{A vector of strings describing symbols to exclude as
-candidates.}
+\item{ignore}{Only used if the source separator is auto-detected (i.e.,
+\code{source_sep} is not specified). A vector of strings describing symbols
+to exclude as candidates.}
 
 \item{target_sep}{A character string describing the character(s) to be used
 as a separator in the converted string. Defaults to an underscore ("_"). If
@@ -31,6 +33,18 @@ Casing-only options include: \code{all_lower},
 \code{first_lower_then_upper}, \code{first_upper}, \code{all_upper},
 \code{title}, \code{sentence}. Casing + separator options include:
 \code{lower_camel}, \code{upper_camel}.}
+
+\item{special_caps}{An optional string vector of words that should be
+capitalized as specified in the string vector. They will be converted to
+lowercase for matching and matching words will be updated to match the
+version provided in the string vector.}
+
+\item{break_alpha_blocks}{If TRUE, conversion from camel case will break up
+capitalized blocks of letters to treat each letter as a single word. If
+FALSE (the default behavior), conversion will try to honor alpha blocks of
+three or more characters as single words. Where two capitalized characters
+occur together, they will be broken up unless they occur at the end of the
+string.}
 }
 \value{
 If the input is a character string - or is successfully converted -

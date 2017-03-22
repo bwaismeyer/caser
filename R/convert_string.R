@@ -98,7 +98,7 @@ convert_string <- function(source_str,
                                       perl = TRUE))
         if(break_alpha_blocks) {
             # Break up all capital blocks.
-            unlist(strsplit(broken_str,
+            broken_str <- unlist(strsplit(broken_str,
                             # Break after upper unless followed by lower.
                             "(?<=[[:upper:]])(?![[:lower:]])",
                             perl = TRUE))

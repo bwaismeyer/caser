@@ -83,4 +83,10 @@ test_that("Manual source, conversion, and ignore rules match expectation", {
                                 target_case = "sentence",
                                 special_caps = c("Brian", "BAM")),
                  "Nobody_likes_a_Brian_BAM")
+    # Break caps honored.
+    expect_equal(convert_string("NobodyLikesABrianBAM",
+                                target_case = "sentence",
+                                break_alpha_blocks = TRUE),
+                 "Nobody_likes_a_brian_b_a_m")
+
 })
